@@ -1,0 +1,146 @@
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background-color: #f0f2f5;
+  padding: 20px;
+  color: #1c1e21;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  width: 60%;
+}
+
+textarea, input[type="text"] {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccd0d5;
+  border-radius: 8px;
+}
+
+#dropZone {
+  padding: 20px;
+  border: 2px dashed #1877f2;
+  border-radius: 10px;
+  text-align: center;
+  background-color: #fff;
+  margin-bottom: 12px;
+  color: #1877f2;
+}
+
+#filePreviewContainer {
+  background-color: #fff;
+  padding: 10px;
+  border: 1px solid #ccd0d5;
+  border-radius: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  margin-bottom: 12px;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #1877f2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: #a3c0f3;
+  cursor: not-allowed;
+}
+
+.log-query-label-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.log-query-label {
+  background-color: #1877f2;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: 600;
+}
+.file-preview {
+  background-color: #f7f9fa;
+  padding: 10px;
+  border: 1px solid #ccd0d5;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+#tagContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.tag {
+  background-color: #e4e6eb;
+  color: #050505;
+  padding: 1px 4px; /* minimal vertical and horizontal padding */
+  border-radius: 4px; /* slight rounding for rectangular shape */
+  font-size: 12px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  border: 1px solid #ccc;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  height: auto;
+}
+
+.tag:hover {
+  background-color: #d1d3d6;
+}
+.tag:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.5);
+}
+.tag:active {
+  background-color: #c8d0d4;
+}
+.tag:focus-visible {
+  outline: 2px solid #1877f2;
+  outline-offset: 2px;
+}
+.tag:focus:not(:focus-visible) {
+  outline: none;
+}
+.tag:disabled {
+  background-color: #e4e6eb;
+  color: #b0b3b8;
+  cursor: not-allowed;
+}
+.tag:disabled:hover {
+  background-color: #e4e6eb;
+} 
+
+
+
+.remove-tag {
+  background: none;
+  border: none;
+  color: #606770;
+  margin-left: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0;
+  line-height: 1;
+}
+

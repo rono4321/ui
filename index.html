@@ -1,37 +1,30 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Log Query UI</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Log Query</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <div class="log-query-label-wrapper">
+    <div class="log-query-label">Log Query</div>
+  </div>
+
   <div class="container">
-<div class="log-query-label-wrapper">
-  <div class="log-query-label">Log Query</div>
-</div>
+    <textarea id="query" placeholder="Paste logs or write your query here..." rows="8"></textarea>
 
+    <input id="tagInput" type="text" placeholder="Enter a tag and press Enter" />
+    <div id="tagContainer"></div>
 
-    <textarea id="query" placeholder="Enter your query or paste logs..." rows="8"></textarea>
-
-    <div id="tagContainer" class="tag-container">
-      <input type="text" id="tagInput" placeholder="Enter a tag and press Enter" />
-    </div>
-
-    <input type="file" id="fileInput" accept=".txt,.log" multiple hidden />
-    <label for="fileInput" class="file-label">Select .txt or .log files</label>
-
-    <div id="dropZone">Or drag & drop .txt or .log files here</div>
+    <div id="dropZone">Drag & Drop log or txt files here or <input type="file" id="fileInput" multiple accept=".log,.txt" /></div>
 
     <div id="filePreviewContainer"></div>
 
     <div class="button-group">
-    <button id="clearFilesBtn">Clear Files</button>
-    <button id="searchBtn" disabled>Search</button>
+      <button id="clearBtn">Clear</button>
+      <button id="searchBtn" disabled>Search</button>
     </div>
-
   </div>
 
   <script src="script.js"></script>
