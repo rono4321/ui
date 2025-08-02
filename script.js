@@ -8,6 +8,9 @@ const filePreviewContainer = document.getElementById('filePreviewContainer');
 const clearFilesBtn = document.getElementById('clearFilesBtn');
 const searchBtn = document.getElementById('searchBtn');
 
+let uploadedFileElements = [];
+
+let queryPreviewElement = null;
 let tags = [];
 let files = [];
 
@@ -60,20 +63,28 @@ function previewFiles(fileList) {
   });
 }
 
-function handleFiles(newFiles) {
-  const validFiles = Array.from(newFiles).filter(file =>
-    file.name.endsWith('.txt') || file.name.endsWith('.log')
-  );
+function handleFiles(files) {
+  const container = document.getElementById("filePreviewContainer");
 
-  validFiles.forEach(file => {
-    if (!files.some(f => f.name === file.name && f.size === file.size)) {
-      files.push(file);
-    }
+  Array.from(files).forEach((file) => {
+    if (!file.name.match(/\.(txt|log)$/)) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const content = e.target.result;
+
+      const filePreview = document.createElement("div");
+      filePreview.className = "file-preview";
+      filePreview.innerHTML = `<strong>${file.name}:</strong><pre>${content}</pre>`;
+
+      container.appendChild(filePreview);
+      uploadedFileElements.push(filePreview);
+    };
+
+    reader.readAsText(file);
   });
-
-  previewFiles(files);
-  updateSearchButtonState();
 }
+
 
 fileInput.addEventListener('change', (e) => {
   handleFiles(e.target.files);
@@ -100,3 +111,54 @@ dropZone.addEventListener('drop', (e) => {
   dropZone.classList.remove('dragover');
   handleFiles(e.dataTransfer.files);
 });
+
+document.getElementById("query").addEventListener("input", function () {
+  const container = document.getElementById("filePreviewContainer");
+  const content = this.value.trim();
+
+  if (!queryPreviewElement) {
+    queryPreviewElement = document.createElement("div");
+    queryPreviewElement.className = "file-preview";
+    queryPreviewElement.innerHTML = "<strong>Query Text:</strong><pre></pre>";
+    container.insertBefore(queryPreviewElement, container.firstChild);
+  }
+
+  queryPreviewElement.querySelector("pre").textContent = content;
+});
+
+
+
+queryField.dispatchEvent(new Event('input'));
+
+
+document.getElementById("clearBtn").addEventListener("click", function () {
+  const queryField = document.getElementById("query");
+  queryField.value = "";
+  queryField.dispatchEvent(new Event('input')); // ensures preview clears too
+  queryField.value = "";
+  queryField.dispatchEvent(new Event("input"));
+
+
+  if (queryPreviewElement) {
+    queryPreviewElement.remove();
+    queryPreviewElement = null;
+  }
+
+  uploadedFileElements.forEach(el => el.remove());
+  uploadedFileElements = [];
+  document.getElementById("fileInput").value = "";
+
+  updateSearchButtonState();
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  const clearBtn = document.getElementById("clearBtn");
+  const queryField = document.getElementById("query");
+
+  clearBtn.addEventListener("click", function () {
+    console.log("Clear button clicked");
+    queryField.value = "";
+    queryField.dispatchEvent(new Event("input"));
+  });
+});
+

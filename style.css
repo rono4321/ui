@@ -135,3 +135,13 @@ button {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+.file-preview {
+  background-color: #f0f2f5;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  font-family: monospace;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
