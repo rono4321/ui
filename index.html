@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Query Interface</title>
+  <style>
+
+    .file-preview {
+      background-color: #f0f2f5;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: monospace;
+      white-space: pre-wrap;
+      color: #1c1e21;
+    }
+    .file-preview h4 {
+      margin-top: 0;
+      font-size: 16px;
+      color: #1877f2;
+  }
+
+
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 60%;
+      margin-top: 50px;
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 8em;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      resize: vertical;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .drop-zone {
+      border: 2px dashed #ccc;
+      padding: 20px;
+      text-align: center;
+      color: #666;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .drop-zone.dragover {
+      background-color: #e4e6eb;
+      border-color: #1877f2;
+      color: #1877f2;
+    }
+
+    #tagsInput {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+
+    .tags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .tag {
+      background-color: #e4e6eb;
+      border-radius: 20px;
+      padding: 5px 12px 5px 10px;
+      font-size: 13px;
+      color: #050505;
+      display: flex;
+      align-items: center;
+    }
+
+    .tag .remove-tag {
+      margin-left: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      color: #606770;
+    }
+
+    .tag .remove-tag:hover {
+      color: #000;
+    }
+
+    button {
+      background-color: #1877f2;
+      color: white;
+      padding: 10px 30px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      display: block;
+      margin: 0 auto;
+    }
+
+    button:hover {
+      background-color: #166fe5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <label for="query">Query</label>
+    <textarea id="query" placeholder="Paste logs or type your query here..."></textarea>
+
+    <label>Attach Files</label>
+    <div id="dropZone" class="drop-zone">
+      Drag and drop .txt or .log files here, or click to select
+    </div>
+    <input type="file" id="fileInput" accept=".txt,.log" multiple>
+
+    <div>
+      <label for="tagsInput">Tags</label>
+      <input type="text" id="tagsInput" placeholder="Enter tags and press Enter">
+      <div id="tagsContainer" class="tags-container"></div>
+    </div>
+
+    <button id="searchBtn">Search</button>
+    <div id="filePreviewContainer" style="margin-top: 30px;"></div>
+    <button id="clearFilesBtn" style="margin-top: 15px; background-color: #e4e6eb; color: #050505;">
+    Clear Files
+   </button>
+  </div>
+
+  <script>
+    const tagsInput = document.getElementById('tagsInput');
+    const tagsContainer = document.getElementById('tagsContainer');
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    let tags = [];
+    let files = [];
+
+    function renderTags() {
+      tagsContainer.innerHTML = '';
+      tags.forEach(tag => {
+        const tagElem = document.createElement('span');
+        tagElem.className = 'tag';
+        tagElem.innerHTML = `
+          ${tag}
+          <span class="remove-tag" data-tag="${tag}">&times;</span>
+        `;
+        tagsContainer.appendChild(tagElem);
+      });
+    }
+
+    tagsInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const tag = tagsInput.value.trim();
+        if (tag && !tags.includes(tag)) {
+          tags.push(tag);
+          renderTags();
+          tagsInput.value = '';
+        }
+      }
+    });
+
+    tagsContainer.addEventListener('click', function (e) {
+      if (e.target.classList.contains('remove-tag')) {
+        const tagToRemove = e.target.getAttribute('data-tag');
+        tags = tags.filter(tag => tag !== tagToRemove);
+        renderTags();
+      }
+    });
+
+    // Drag and Drop
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('dragover');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      handleFiles(e.dataTransfer.files);
+    });
+
+    fileInput.addEventListener('change', () => {
+      handleFiles(fileInput.files);
+    });
+
+function handleFiles(fileList) {
+  const validFiles = Array.from(fileList).filter(file =>
+    file.name.endsWith('.txt') || file.name.endsWith('.log')
+  );
+
+  if (validFiles.length > 0) {
+    files.push(...validFiles);
+    const fileNames = validFiles.map(f => f.name).join(', ');
+    dropZone.textContent = `Attached: ${fileNames}`;
+    previewFiles(validFiles);
+  }
+}
+
+function previewFiles(fileList) {
+  const previewContainer = document.getElementById('filePreviewContainer');
+  previewContainer.innerHTML = '';
+
+  Array.from(fileList).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const div = document.createElement('div');
+      div.className = 'file-preview';
+      div.innerHTML = `<h4>${file.name}</h4><pre>${e.target.result}</pre>`;
+      previewContainer.appendChild(div);
+    };
+    reader.readAsText(file);
+  });
+}
+
+const clearFilesBtn = document.getElementById('clearFilesBtn');
+
+clearFilesBtn.addEventListener('click', () => {
+  files = [];
+  dropZone.textContent = 'Drag & drop .txt or .log files here or use the file input above.';
+  document.getElementById('filePreviewContainer').innerHTML = '';
+});
+
+
+
+    document.getElementById('searchBtn').addEventListener('click', () => {
+      alert(`Query: ${document.getElementById('query').value}\nTags: ${tags.join(', ')}\nFiles: ${files.map(f => f.name).join(', ')}`);
+    });
+  </script>
+</body>
+</html>
