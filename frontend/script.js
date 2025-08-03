@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const resultArea = getResultArea();
 
     try {
-      const simulateFound = false;
+      const simulateFound = true;
 
       if (simulateFound) {
         let sortAsc = true;
@@ -257,8 +257,10 @@ document.getElementById("queryIdContainer").innerHTML = `
         <h3>❓ No Answer Found</h3>
         <p>You can contribute an answer for this unresolved query:</p>
         <textarea id="userAnswer" rows="6" style="width: 90%; margin-top: 5px;"></textarea><br><br>
-        <button id="submitAnswerBtn">Contribute your own answer</button>
-        <button id="submitQueryBtn">Submit my brand New Query</button>
+        <div style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
+              <button id="submitAnswerBtn">💬 Contribute Your Own Answer</button>
+              <button id="submitQueryBtn">📝 Submit my brand New Query</button>
+            </div>
         <div id="queryIdContainer" style="margin-top: 15px;"></div>
       `;
 
