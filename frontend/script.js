@@ -11,8 +11,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const tagContainer = document.getElementById("tagContainer");
 
   let tags = new Set();
-
   const resultAreaId = "resultArea";
+
   function getResultArea() {
     let area = document.getElementById(resultAreaId);
     if (!area) {
@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
       area.style.backgroundColor = "#fff";
       document.body.appendChild(area);
     }
-    area.innerHTML = ""; // Clear previous
+    area.innerHTML = "";
     return area;
   }
 
@@ -123,7 +123,6 @@ document.addEventListener("DOMContentLoaded", function () {
     updateSearchButtonState();
   });
 
-  // 🔍 Stubbed backend logic
   searchBtn.addEventListener("click", async () => {
     const query = queryField.value.trim();
     const fileContent = filePreview.dataset.filesText || "";
@@ -131,8 +130,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const resultArea = getResultArea();
 
     try {
-      // Toggle: true = found, false = not found
-      const simulateFound = true;
+      const simulateFound = false;
 
       if (simulateFound) {
         let sortAsc = true;
@@ -166,8 +164,8 @@ document.addEventListener("DOMContentLoaded", function () {
             sortAsc ? new Date(a.date) - new Date(b.date) : new Date(b.date) - new Date(a.date)
           );
           const arrow = sortAsc
-            ? '<span style="color:#555;">&#9650;</span>'  // ▲
-            : '<span style="color:#555;">&#9660;</span>';  // ▼
+            ? '<span style="color:#555;">&#9650;</span>'
+            : '<span style="color:#555;">&#9660;</span>';
 
           let tableHTML = `
             <h3>✅ Answers Found (${answers.length})</h3>
@@ -192,55 +190,95 @@ document.addEventListener("DOMContentLoaded", function () {
             tableHTML += `
               <tr>
                 <td>${index + 1}</td>
-                <td style="white-space: pre-wrap;">
-                  <a href="${ans.link}" target="_blank" rel="noopener noreferrer">${ans.content}</a>
-                </td>
+                <td><a href="${ans.link}" target="_blank">${ans.content}</a></td>
                 <td>${ans.author}</td>
                 <td>${ans.date}</td>
               </tr>
             `;
           });
 
-          tableHTML += `</tbody></table>`;
+          tableHTML += `
+              </tbody>
+            </table>
+            <div style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
+              <button id="showAnswerInputBtn">💬 Contribute Your Own Answer</button>
+              <button id="submitQueryBtn">📝 Submit my brand New Query</button>
+            </div>
+            <div id="userAnswerContainer" style="display:none; margin-top: 12px;">
+              <textarea id="userAnswer" rows="6" placeholder="Enter your answer here..." style="width: 90%;"></textarea>
+              <div style="margin-top: 10px;">
+                <button id="submitAnswerBtn">Submit Answer</button>
+              </div>
+            </div>
+            <div id="queryIdContainer" style="margin-top: 15px; text-align:center;"></div>
+          `;
+
           resultArea.innerHTML = tableHTML;
 
-          const dateHeader = document.getElementById("dateHeader");
-          if (dateHeader) {
-            dateHeader.addEventListener("click", () => {
-              sortAsc = !sortAsc;
-              renderTable();
-            });
-          }
+          document.getElementById("dateHeader").addEventListener("click", () => {
+            sortAsc = !sortAsc;
+            renderTable();
+          });
+
+          document.getElementById("showAnswerInputBtn").addEventListener("click", () => {
+            document.getElementById("userAnswerContainer").style.display = "block";
+            document.getElementById("showAnswerInputBtn").disabled = true;
+          });
+
+          document.getElementById("submitAnswerBtn").addEventListener("click", () => {
+            const answer = document.getElementById("userAnswer").value.trim();
+if (!answer) return alert("Please enter a valid answer.");
+const stubQueryId = "q-" + Math.random().toString(36).slice(2, 10);
+document.getElementById("queryIdContainer").innerHTML = `
+  <p>✅ Thank you for your submission.</p>
+  <p>📌 Answer submitted under Query ID: <strong>${stubQueryId}</strong></p>
+`;
+
+          });
+
+          document.getElementById("submitQueryBtn").addEventListener("click", () => {
+            const stubQueryId = "q-" + Math.random().toString(36).slice(2, 10);
+            const output = `
+              <p style="margin-top: 10px;">
+                📌 Stub: Your query has been submitted. <strong>Query ID: ${stubQueryId}</strong>
+              </p>`;
+            document.getElementById("queryIdContainer").innerHTML = output;
+            console.log("Stub query submitted:", stubQueryId);
+          });
         };
 
         renderTable();
         return;
       }
 
-      // Stub: no answer found
+      // No answer found
       const fakeQueryId = "stub-12345";
       resultArea.innerHTML = `
         <h3>❓ No Answer Found</h3>
         <p>You can contribute an answer for this unresolved query:</p>
-        <label for="userAnswer">Your Answer:</label><br>
-        <textarea id="userAnswer" rows="5" style="width: 90%; margin-top: 5px;"></textarea><br><br>
-        <button id="submitAnswerBtn">Submit Answer</button>
+        <textarea id="userAnswer" rows="6" style="width: 90%; margin-top: 5px;"></textarea><br><br>
+        <button id="submitAnswerBtn">Contribute your own answer</button>
+        <button id="submitQueryBtn">Submit my brand New Query</button>
+        <div id="queryIdContainer" style="margin-top: 15px;"></div>
       `;
 
-      // Attach event handler immediately after DOM injection
-      const submitBtn = resultArea.querySelector("#submitAnswerBtn");
-      const userAnswerInput = resultArea.querySelector("#userAnswer");
+      document.getElementById("submitAnswerBtn").addEventListener("click", () => {
+        const answer = document.getElementById("userAnswer").value.trim();
+if (!answer) return alert("Please enter a valid answer.");
+const stubQueryId = "q-" + Math.random().toString(36).slice(2, 10);
+document.getElementById("queryIdContainer").innerHTML = `
+  <p>✅ Thank you for your submission.</p>
+  <p>📌 Answer submitted under Query ID: <strong>${stubQueryId}</strong></p>
+`;
 
-      submitBtn.addEventListener("click", () => {
-        const answer = userAnswerInput.value.trim();
-        console.log("Captured answer:", answer);
-        if (!answer) {
-          alert("Please enter a valid answer.");
-          return;
-        }
+      });
 
-        console.log("Stub submit:", { query_id: fakeQueryId, answer });
-        resultArea.innerHTML = `<p>✅ Thank you! Your answer was stubbed as submitted.</p>`;
+      document.getElementById("submitQueryBtn").addEventListener("click", () => {
+        const stubQueryId = "q-" + Math.random().toString(36).slice(2, 10);
+        document.getElementById("queryIdContainer").innerHTML = `
+          <p>📌 Stub: Your query has been submitted. <strong>Query ID: ${stubQueryId}</strong></p>
+        `;
+        console.log("Stub query submitted:", stubQueryId);
       });
 
     } catch (err) {
